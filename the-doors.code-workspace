@@ -1,0 +1,18 @@
+{
+    "folders": [
+        {
+            "name": "The Doors Backend",
+            "path": "."
+        },
+        {
+            "name": "The Doors Frontend", 
+            "path": "./frontend"
+        }
+    ],
+    "settings": {
+        "files.exclude": {
+            "**/node_modules": true,
+            "**/target": true
+        }
+    }
+}
