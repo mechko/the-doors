@@ -219,6 +219,33 @@ Authorization: Bearer <jwt_token>
 
 ## Setup
 
+### Option 1: Docker (Recommended)
+
+1. **Build and run with Docker Compose**:
+   ```bash
+   # Copy and configure environment variables
+   cp .env.docker .env
+   # Edit .env with your actual values
+   
+   # Build and start services
+   docker-compose up --build
+   ```
+
+2. **Or build and run manually**:
+   ```bash
+   # Build the Docker image
+   docker build -t the-doors-backend .
+   
+   # Run with environment variables
+   docker run -p 8080:8080 \
+     -e DATABASE_URL="mysql://user:password@host:3306/mrbs_db" \
+     -e JWT_SECRET="your-secret-key" \
+     -e CCU_JACK_URL="https://your-ccu-jack-host:2121" \
+     the-doors-backend
+   ```
+
+### Option 2: Local Development
+
 1. **Install Rust** (if not already installed):
    ```bash
    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
@@ -230,7 +257,7 @@ Authorization: Bearer <jwt_token>
    cp .env.example .env
    ```
 
-4. **Run the application**:
+3. **Run the application**:
    ```bash
    cargo run
    ```

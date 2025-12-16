@@ -1,0 +1,69 @@
+{
+  "db_name": "MySQL",
+  "query": "SELECT id, name as \"name!\", display_name as \"display_name!\", email as \"email!\", password_hash as \"password_hash!\" FROM mrbs_users WHERE name = ? OR email = ?",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": {
+          "type": "Long",
+          "flags": "NOT_NULL | PRIMARY_KEY | AUTO_INCREMENT",
+          "char_set": 63,
+          "max_size": 11
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "name!",
+        "type_info": {
+          "type": "VarString",
+          "flags": "UNIQUE_KEY",
+          "char_set": 224,
+          "max_size": 120
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "display_name!",
+        "type_info": {
+          "type": "VarString",
+          "flags": "",
+          "char_set": 224,
+          "max_size": 764
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "email!",
+        "type_info": {
+          "type": "VarString",
+          "flags": "",
+          "char_set": 224,
+          "max_size": 300
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "password_hash!",
+        "type_info": {
+          "type": "VarString",
+          "flags": "",
+          "char_set": 224,
+          "max_size": 1020
+        }
+      }
+    ],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": [
+      false,
+      true,
+      true,
+      true,
+      true
+    ]
+  },
+  "hash": "c63ac581f8e5103f4984d3b9bcb945f9bfa36c92e0901fc2774f771fdef2c6af"
+}

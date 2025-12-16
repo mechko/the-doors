@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  the-doors-frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+      - "3443:443"
+    depends_on:
+      - the-doors-backend
+    networks:
+      - the-doors-network
+
+  the-doors-backend:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - DATABASE_URL=mysql://mrbs_user:mrbs_password@mysql:3306/mrbs
+      - JWT_SECRET=your-super-secret-jwt-key-change-in-production
+      - SERVER_HOST=0.0.0.0
+      - SERVER_PORT=8080
+      - RUST_LOG=info
+      - CCU_JACK_URL=https://your-ccu-jack-host
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - the-doors-network
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=mrbs
+      - MYSQL_USER=mrbs_user
+      - MYSQL_PASSWORD=mrbs_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./tmp:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+    networks:
+      - the-doors-network
+
+volumes:
+  mysql_data:
+
+networks:
+  the-doors-network:
+    driver: bridge
