@@ -32,9 +32,6 @@ RUN useradd -m -u 1001 appuser
 # Create app directory
 WORKDIR /app
 
-# COPY .env
-COPY .env ./
-
 # Copy the binary from builder stage
 COPY --from=builder /usr/src/app/target/release/the-doors-backend /app/the-doors-backend
 
