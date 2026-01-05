@@ -2,7 +2,7 @@ import axios from 'axios'
 
 // Create axios instance with base configuration
 export const apiClient = axios.create({
-  baseURL: 'http://localhost:8080/api',
+  baseURL: '/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
@@ -31,7 +31,10 @@ apiClient.interceptors.response.use(
       // Handle unauthorized access
       localStorage.removeItem('token')
       localStorage.removeItem('user')
-      window.location.href = '/login'
+      // Only redirect if not already on login page
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login'
+      }
     }
     return Promise.reject(error)
   }

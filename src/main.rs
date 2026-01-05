@@ -47,14 +47,7 @@ async fn main() -> std::io::Result<()> {
 
     // Start HTTP server
     HttpServer::new(move || {
-        let cors = Cors::default()
-            .allowed_origin("http://localhost:8081") // Your frontend URL
-            .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
-            .allowed_headers(vec!["Authorization", "Content-Type"])
-            .supports_credentials();
-
         App::new()
-            .wrap(cors)
             .wrap(Logger::default())
             .app_data(web::Data::new(user_repo.clone()))
             .app_data(web::Data::new(jwt_service.clone()))

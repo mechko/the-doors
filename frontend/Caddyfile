@@ -1,6 +1,15 @@
-{$DOMAIN} {
-    root * /usr/share/caddy
-    file_server
-    try_files {path} /index.html
-    encode gzip
+{$DOMAIN:localhost} {
+    # Proxy API requests to backend (must be first)
+    @api path /api/*
+    handle @api {
+        reverse_proxy the-doors-backend:8080
+    }
+
+    # Serve frontend static files for everything else
+    handle {
+        root * /usr/share/caddy
+        try_files {path} /index.html
+        file_server
+        encode gzip
+    }
 }

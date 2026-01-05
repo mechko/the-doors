@@ -207,10 +207,10 @@ async fn toggle_door(
         .build()
         .unwrap();
 
-    let homematic_url = env::var("HOMEMATIC_URL")
-            .expect("HOMEMATIC_URL must be set");
+    let ccu_jack_url = env::var("CCU_JACK_URL")
+            .expect("CCU_JACK_URL must be set");
 
-    let door_action_url = format!("{}/device/{}/1/LOCK_TARGET_LEVEL/~pv", homematic_url, entry.lock_id);
+    let door_action_url = format!("{}/device/{}/1/LOCK_TARGET_LEVEL/~pv", ccu_jack_url, entry.lock_id);
 
     info!("Attempting to {} door for entry {} by user {}", log_action, request.entry_id, claims.username);
     info!("Door action URL: {}", door_action_url);

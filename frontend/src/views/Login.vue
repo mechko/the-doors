@@ -74,17 +74,19 @@ export default {
       }
       
       loading.value = true
-      error.value = ''
+      error.value = '' // Clear previous errors
       
-      const result = await authStore.login(form.value)
-      
-      if (result.success) {
-        router.push('/')
-      } else {
-        error.value = result.error
+      try {
+        const result = await authStore.login(form.value)
+        
+        if (result.success) {
+          router.push('/')
+        } else {
+          error.value = result.error
+        }
+      } finally {
+        loading.value = false
       }
-      
-      loading.value = false
     }
     
     return {
