@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   the-doors-frontend:
-    build: ./frontend
+    image: ghcr.io/mechko/the-doors-frontend:latest
     ports:
       - "3000:80"
       - "3443:443"
@@ -14,7 +14,7 @@ services:
       - the-doors-network
 
   the-doors-backend:
-    build: .
+    image: ghcr.io/mechko/the-doors-backend:latest
     expose:
       - "8080"
     environment:
