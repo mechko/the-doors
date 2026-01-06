@@ -1,4 +1,7 @@
 {$DOMAIN:localhost} {
+
+    tls internal
+
     # Proxy API requests to backend (must be first)
     @api path /api/*
     handle @api {
