@@ -7,7 +7,7 @@ services:
       - "3000:80"
       - "3443:443"
     environment:
-      - DOMAIN=localhost
+      - DOMAIN=${DOMAIN:-localhost}
     depends_on:
       - the-doors-backend
     networks:
