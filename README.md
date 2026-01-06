@@ -46,6 +46,8 @@ graph TD
 
 I decided to use the MRBS Database as the integration layer with MRBS. The alternative would have been to customize the MRBS PHP application (prototype successful), but this will make updates of MRBS more difficult.
 
+We're using the table mrbs_room to store the ID of the Homematic lock for the room in the column "sort_key" (which is a string type). This can be easily edited by admins of MRBS in the web frontend. A minor drawback is that this of course changes the sort order of the rooms in the user interface. In future versions, this could be circumvented by introducing a convention to prefix the ID with the actual sort key (and then parsing the ID later from that entry).
+
 ### Component Description
 
 - **The Doors Frontend (Vue.js)**: User interface for authentication, viewing room bookings, and controlling door access
@@ -221,14 +223,34 @@ Authorization: Bearer <jwt_token>
 
 ### Option 1: Docker (Recommended)
 
+#### Environment Variables
+
+The following environment variables can be configured in a `.env` file for docker-compose:
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `HTTP_PORT` | `3000` | HTTP port for the frontend |
+| `HTTPS_PORT` | `3443` | HTTPS port for the frontend |
+| `DOMAIN` | `localhost` | Domain name for the frontend |
+| `DATABASE_URL` | `mysql://mrbs_user:mrbs_password@mysql:3306/mrbs` | MySQL connection string for the backend |
+| `JWT_SECRET` | `your-super-secret-jwt-key-change-in-production` | Secret key for JWT token generation (change in production) |
+| `SERVER_HOST` | `0.0.0.0` | Host address the backend server binds to (not so relevant, because Docker)|
+| `SERVER_PORT` | `8080` | Port the backend server listens on (shouldn't be changed because the docker-compose would break) |
+| `RUST_LOG` | `info` | Logging level (`error`, `warn`, `info`, `debug`, `trace`) |
+| `CCU_JACK_URL` | `https://your-ccu-jack-host` | Base URL for the CCU-JACK API |
+| `TIME_WINDOW_BEFORE_BOOKING` | `600` | Time in seconds before a booking starts that the door can be opened (600 = 10 minutes) |
+| `TIME_WINDOW_AFTER_BOOKING` | `600` | Time in seconds after a booking ends that the door can still be opened (600 = 10 minutes) |
+
+#### Running with Docker Compose
+
 1. **Build and run with Docker Compose**:
    ```bash
    # Copy and configure environment variables
-   cp .env.docker .env
+   cp .env.example .env
    # Edit .env with your actual values
    
-   # Build and start services
-   docker-compose up --build
+   # Start services (Docker images are going to be pulled from GHCR)
+   docker-compose up
    ```
 
 2. **Or build and run manually**:

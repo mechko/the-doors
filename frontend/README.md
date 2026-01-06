@@ -105,7 +105,6 @@ The frontend communicates with the Rust backend through:
 - ✅ Automatic token validation
 - ✅ Protected routes with navigation guards
 - ✅ Automatic logout on token expiration
-- ✅ CSRF protection through proper headers
 
 ## Development
 
