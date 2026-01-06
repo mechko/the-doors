@@ -1,4 +1,7 @@
 {$DOMAIN:localhost} {
+    # Prototype: self-signed cert
+    tls internal 
+    
     # Proxy API requests to backend (must be first)
     @api path /api/*
     handle @api {
