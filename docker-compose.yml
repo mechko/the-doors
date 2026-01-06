@@ -1,11 +1,9 @@
-version: '3.8'
-
 services:
   the-doors-frontend:
     image: ghcr.io/mechko/the-doors-frontend:latest
     ports:
-      - "3000:80"
-      - "3443:443"
+      - "${HTTP_PORT:-3000}:80"
+      - "${HTTPS_PORT:-3443}:443"
     environment:
       - DOMAIN=${DOMAIN:-localhost}
     depends_on:
