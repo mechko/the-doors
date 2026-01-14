@@ -196,9 +196,11 @@ async fn toggle_door(
     }
 
     // Determine the operation value and messages based on the operation type
+    // For the Homematic IP Locks, we have the following value ENUM: LOCKED, UNLOCKED, OPEN (0,1,2)
+    // We need to toggle between UNLOCKED (aka Open, 1) and LOCKED (aka Close, 0)
     let (operation_value, success_message, error_message, log_action) = match operation {
-        DoorOperation::Open => (2, "Door opened successfully", "Failed to open door", "opened"),
-        DoorOperation::Close => (1, "Door closed successfully", "Failed to close door", "closed"),
+        DoorOperation::Open => (1, "Door opened successfully", "Failed to open door", "opened"),
+        DoorOperation::Close => (0, "Door closed successfully", "Failed to close door", "closed"),
     };
 
     // Make HTTP request to the demo service (accepting self-signed certificates)
