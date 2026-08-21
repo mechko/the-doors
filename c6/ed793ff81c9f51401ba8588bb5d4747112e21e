@@ -1,0 +1,27 @@
+README.md
+  s_c7661b417906cb::t_0cb8e2e2463f52 264,276
+  s_c7661b417906cb::t_71d54f98af7190 265-275,277
+docker-compose.local-build.yml
+  s_c7661b417906cb::t_71d54f98af7190 1-8
+.env.example
+  s_c7661b417906cb::t_0cb8e2e2463f52 3-4
+  s_c7661b417906cb::t_71d54f98af7190 5
+Dockerfile
+  s_c7661b417906cb::t_4f0d35949c020b 2
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "c6ed793ff81c9f51401ba8588bb5d4747112e21e",
+  "prompts": {},
+  "sessions": {
+    "s_c7661b417906cb": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a024ad-aed1-7323-9418-392658f8db81",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Mirko Swillus <mechko@mk0.eu>"
+    }
+  }
+}
