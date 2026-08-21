@@ -1,0 +1,25 @@
+frontend/src/views/Login.vue
+  s_c7661b417906cb::t_34dc4ad38f9f88 109,233-235,237-238,240,242-247,253-261
+  s_c7661b417906cb::t_01b617b17cbf7b 232,236,241
+frontend/src/views/Bookings.vue
+  s_c7661b417906cb::t_01b617b17cbf7b 521,535-549,552,556-578,602,606
+frontend/src/App.vue
+  s_c7661b417906cb::t_34dc4ad38f9f88 61,66,137-159
+  s_c7661b417906cb::t_719a1ce25c3121 160
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "ef32fec791c48e154252d06a1589297e770a7662",
+  "prompts": {},
+  "sessions": {
+    "s_c7661b417906cb": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a024ad-aed1-7323-9418-392658f8db81",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Mirko Swillus <mechko@mk0.eu>"
+    }
+  }
+}
