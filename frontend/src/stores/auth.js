@@ -64,7 +64,7 @@ export const useAuthStore = defineStore('auth', () => {
       localStorage.setItem('user', JSON.stringify(user.value))
       
       return true
-    } catch (err) {
+    } catch {
       // Token is invalid, clear auth data
       logout()
       return false

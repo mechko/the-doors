@@ -152,7 +152,7 @@ export default {
         } else {
           entriesError.value = result.error
         }
-      } catch (error) {
+      } catch {
         entriesError.value = 'Failed to load entries'
       } finally {
         loadingEntries.value = false
@@ -170,7 +170,7 @@ export default {
         } else {
           alert(`Failed to open door: ${result.error}`)
         }
-      } catch (error) {
+      } catch {
         alert('Failed to open door: Network error')
       } finally {
         openingDoor.value = null
@@ -188,7 +188,7 @@ export default {
         } else {
           alert(`Failed to close door: ${result.error}`)
         }
-      } catch (error) {
+      } catch {
         alert('Failed to close door: Network error')
       } finally {
         closingDoor.value = null
@@ -205,7 +205,7 @@ export default {
         
         // Format the date
         return format(berlinTime, 'PPP p')
-      } catch (error) {
+      } catch {
         return 'Invalid date'
       }
     }
@@ -215,7 +215,7 @@ export default {
         const start = fromUnixTime(startTime)
         const end = fromUnixTime(endTime)
         return formatDistanceStrict(start, end)
-      } catch (error) {
+      } catch {
         return 'Unknown duration'
       }
     }
