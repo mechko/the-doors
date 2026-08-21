@@ -1,8 +1,11 @@
 use actix_web::{web, HttpResponse, Responder};
-use log::{error, info};
-use crate::models::{LoginRequest, AuthResponse, ErrorResponse, UserResponse, EntryResponse, DoorRequest, DoorResponse};
-use crate::repository::UserAndRoomRepository;
 use crate::jwt::{JwtService, Claims};
+use crate::models::{
+    AuthResponse, DoorRequest, DoorResponse, Entry, EntryResponse, ErrorResponse, LoginRequest,
+    UserResponse,
+};
+use crate::repository::UserAndRoomRepository;
+use log::{error, info, warn};
 use std::env;
 
 #[derive(Debug, Clone, Copy)]
@@ -10,7 +13,6 @@ pub enum DoorOperation {
     Open,
     Close,
 }
-
 
 pub async fn login(
     user_repo: web::Data<UserAndRoomRepository>,
@@ -108,20 +110,25 @@ pub async fn get_user_entries(
     path: web::Path<String>,
 ) -> impl Responder {
     // Extract and validate JWT token
-    let _claims = match extract_and_validate_token(&req, &jwt_service).await {
+    let claims = match extract_and_validate_token(&req, &jwt_service).await {
         Ok(claims) => claims,
         Err(response) => return response,
     };
 
     let username = path.into_inner();
-    
+
+    if username != claims.username {
+        return HttpResponse::Forbidden().json(ErrorResponse {
+            error: "You don't have permission to view these entries".to_string(),
+        });
+    }
+
     // Fetch entries for the user
     match user_repo.find_entries_by_username(&username).await {
         Ok(entries) => {
-            let entry_responses: Vec<EntryResponse> = entries.into_iter()
-                .map(EntryResponse::from)
-                .collect();
-            
+            let entry_responses: Vec<EntryResponse> =
+                entries.into_iter().map(EntryResponse::from).collect();
+
             info!("Found {} entries for user: {}", entry_responses.len(), username);
             HttpResponse::Ok().json(entry_responses)
         }
@@ -188,6 +195,16 @@ async fn toggle_door(
         });
     }
 
+    match entry_is_inside_booking_window(&entry) {
+        Ok(true) => {}
+        Ok(false) => {
+            return HttpResponse::Forbidden().json(ErrorResponse {
+                error: "Door control is only allowed during the booking time window".to_string(),
+            });
+        }
+        Err(response) => return response,
+    }
+
     // Verify that we have a lock ID for the entry (aka room)
     if entry.lock_id.is_empty() {
         return HttpResponse::NotFound().json(ErrorResponse {
@@ -203,21 +220,37 @@ async fn toggle_door(
         DoorOperation::Close => (0, "Door closed successfully", "Failed to close door", "closed"),
     };
 
-    // Make HTTP request to the demo service (accepting self-signed certificates)
-    let client = reqwest::Client::builder()
-        .danger_accept_invalid_certs(true)
-        .build()
-        .unwrap();
+    let mut client_builder = reqwest::Client::builder();
+    if accepts_invalid_ccu_jack_certs() {
+        warn!("CCU_JACK_ACCEPT_INVALID_CERTS is enabled; TLS certificates for CCU-JACK will not be verified");
+        client_builder = client_builder.danger_accept_invalid_certs(true);
+    }
 
-    let ccu_jack_url = env::var("CCU_JACK_URL")
-            .expect("CCU_JACK_URL must be set");
+    let client = match client_builder.build() {
+        Ok(client) => client,
+        Err(e) => {
+            error!("Failed to build door service client: {}", e);
+            return HttpResponse::InternalServerError().json(ErrorResponse {
+                error: "Internal server error".to_string(),
+            });
+        }
+    };
 
-    let door_action_url = format!("{}/device/{}/1/LOCK_TARGET_LEVEL/~pv", ccu_jack_url, entry.lock_id);
+    let ccu_jack_url = env::var("CCU_JACK_URL").expect("CCU_JACK_URL must be set");
 
-    info!("Attempting to {} door for entry {} by user {}", log_action, request.entry_id, claims.username);
+    let door_action_url = format!(
+        "{}/device/{}/1/LOCK_TARGET_LEVEL/~pv",
+        ccu_jack_url, entry.lock_id
+    );
+
+    info!(
+        "Attempting to {} door for entry {} by user {}",
+        log_action, request.entry_id, claims.username
+    );
     info!("Door action URL: {}", door_action_url);
 
-    match client.put(door_action_url)
+    match client
+        .put(door_action_url)
         .json(&serde_json::json!({
             "v": operation_value,
         }))
@@ -226,7 +259,10 @@ async fn toggle_door(
     {
         Ok(response) => {
             if response.status().is_success() {
-                info!("Door {} successfully for entry {} by user {}", log_action, request.entry_id, claims.username);
+                info!(
+                    "Door {} successfully for entry {} by user {}",
+                    log_action, request.entry_id, claims.username
+                );
                 HttpResponse::Ok().json(DoorResponse {
                     success: true,
                     message: success_message.to_string(),
@@ -247,6 +283,37 @@ async fn toggle_door(
             })
         }
     }
+}
+
+fn entry_is_inside_booking_window(entry: &Entry) -> Result<bool, HttpResponse> {
+    let now = chrono::Utc::now().timestamp();
+    let time_window_before = read_i64_env("TIME_WINDOW_BEFORE_BOOKING")?;
+    let time_window_after = read_i64_env("TIME_WINDOW_AFTER_BOOKING")?;
+
+    Ok(now >= entry.start_time - time_window_before
+        && now <= entry.end_time + time_window_after)
+}
+
+fn read_i64_env(name: &str) -> Result<i64, HttpResponse> {
+    let value = env::var(name).map_err(|_| {
+        error!("{} must be set", name);
+        HttpResponse::InternalServerError().json(ErrorResponse {
+            error: "Internal server error".to_string(),
+        })
+    })?;
+
+    value.parse::<i64>().map_err(|_| {
+        error!("{} must be a valid integer", name);
+        HttpResponse::InternalServerError().json(ErrorResponse {
+            error: "Internal server error".to_string(),
+        })
+    })
+}
+
+fn accepts_invalid_ccu_jack_certs() -> bool {
+    env::var("CCU_JACK_ACCEPT_INVALID_CERTS")
+        .map(|value| matches!(value.to_ascii_lowercase().as_str(), "1" | "true" | "yes"))
+        .unwrap_or(false)
 }
 
 // Helper function to extract and validate JWT token from request

@@ -1,8 +1,7 @@
-use std::env;
-
-use sqlx::{MySql, Pool};
 use anyhow::Result;
-use crate::models::{User, Entry};
+use crate::models::{Entry, User};
+use sqlx::{MySql, Pool};
+use std::env;
 
 #[derive(Clone)]
 pub struct UserAndRoomRepository {
@@ -42,10 +41,8 @@ impl UserAndRoomRepository {
         let now = chrono::Utc::now().timestamp();
 
         // assumtion: start_time and end_time in DB are in UTC
-        let time_window_before = env::var("TIME_WINDOW_BEFORE_BOOKING")
-            .expect("TIME_WINDOW_BEFORE_BOOKING must be set");
-        let time_window_after = env::var("TIME_WINDOW_AFTER_BOOKING")
-            .expect("TIME_WINDOW_AFTER_BOOKING must be set");
+        let time_window_before = read_i64_env("TIME_WINDOW_BEFORE_BOOKING")?;
+        let time_window_after = read_i64_env("TIME_WINDOW_AFTER_BOOKING")?;
 
         let entries = sqlx::query_as!(
             Entry,
@@ -69,4 +66,8 @@ impl UserAndRoomRepository {
 
         Ok(entry)
     }
+}
+
+fn read_i64_env(name: &str) -> Result<i64> {
+    Ok(env::var(name)?.parse::<i64>()?)
 }

@@ -21,10 +21,8 @@ async fn main() -> std::io::Result<()> {
     env_logger::init();
 
     // Get configuration from environment
-    let database_url = env::var("DATABASE_URL")
-        .expect("DATABASE_URL must be set");
-    let jwt_secret = env::var("JWT_SECRET")
-        .expect("JWT_SECRET must be set");
+    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    let jwt_secret = read_jwt_secret()?;
     let host = env::var("SERVER_HOST")
         .unwrap_or_else(|_| "127.0.0.1".to_string());
     let port = env::var("SERVER_PORT")
@@ -111,4 +109,25 @@ fn read_env_u64(name: &str, default: u64) -> u64 {
         .ok()
         .and_then(|value| value.parse::<u64>().ok())
         .unwrap_or(default)
+}
+
+fn read_jwt_secret() -> std::io::Result<String> {
+    let secret = env::var("JWT_SECRET").map_err(|_| {
+        std::io::Error::new(std::io::ErrorKind::InvalidInput, "JWT_SECRET must be set")
+    })?;
+    let trimmed_secret = secret.trim();
+    let known_insecure_secrets = [
+        "your-super-secret-jwt-key-change-in-production",
+        "your-super-secret-jwt-key-here",
+        "your-secret-key",
+    ];
+
+    if trimmed_secret.len() < 32 || known_insecure_secrets.contains(&trimmed_secret) {
+        return Err(std::io::Error::new(
+            std::io::ErrorKind::InvalidInput,
+            "JWT_SECRET must be a non-default random value with at least 32 characters",
+        ));
+    }
+
+    Ok(secret)
 }

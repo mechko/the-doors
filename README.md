@@ -118,7 +118,7 @@ Authorization: Bearer <jwt_token>
 ```
 
 ### GET /api/entries/{username}
-Get all room booking entries for a specific user (requires JWT token).
+Get room booking entries for the authenticated user (requires JWT token). The `{username}` path value must match the username in the JWT.
 
 **Headers:**
 ```
@@ -156,7 +156,9 @@ OK
 ### POST /api/open_door
 Open door for a specific entry (requires JWT token).
 
-**Note**: This endpoint makes an HTTPS request to an external service that uses self-signed certificates. The client is configured to accept invalid certificates for this purpose.
+Door control is only allowed for the authenticated user's own entries during the configured booking time window.
+
+**Note**: TLS certificate verification is enabled by default for CCU-JACK requests. Set `CCU_JACK_ACCEPT_INVALID_CERTS=true` only when using a self-signed certificate and accepting the network risk.
 
 **Headers:**
 ```
@@ -189,7 +191,9 @@ Authorization: Bearer <jwt_token>
 ### POST /api/close_door
 Close door for a specific entry (requires JWT token).
 
-**Note**: This endpoint makes an HTTPS request to an external service that uses self-signed certificates. The client is configured to accept invalid certificates for this purpose.
+Door control is only allowed for the authenticated user's own entries during the configured booking time window.
+
+**Note**: TLS certificate verification is enabled by default for CCU-JACK requests. Set `CCU_JACK_ACCEPT_INVALID_CERTS=true` only when using a self-signed certificate and accepting the network risk.
 
 **Headers:**
 ```
@@ -233,11 +237,12 @@ The following environment variables can be configured in a `.env` file for docke
 | `HTTPS_PORT` | `3443` | HTTPS port for the frontend |
 | `DOMAIN` | `localhost` | Domain name for the frontend |
 | `DATABASE_URL` | `mysql://mrbs_user:mrbs_password@mysql:3306/mrbs` | MySQL connection string for the backend |
-| `JWT_SECRET` | `your-super-secret-jwt-key-change-in-production` | Secret key for JWT token generation (change in production) |
+| `JWT_SECRET` | Required | Random secret for JWT token generation. Must be at least 32 characters and must not use a public placeholder. |
 | `SERVER_HOST` | `0.0.0.0` | Host address the backend server binds to (not so relevant, because Docker)|
 | `SERVER_PORT` | `8080` | Port the backend server listens on (shouldn't be changed because the docker-compose would break) |
 | `RUST_LOG` | `info` | Logging level (`error`, `warn`, `info`, `debug`, `trace`) |
 | `CCU_JACK_URL` | `https://your-ccu-jack-host` | Base URL for the CCU-JACK API |
+| `CCU_JACK_ACCEPT_INVALID_CERTS` | `false` | Set to `true` only to explicitly allow invalid/self-signed CCU-JACK TLS certificates |
 | `TIME_WINDOW_BEFORE_BOOKING` | `600` | Time in seconds before a booking starts that the door can be opened (600 = 10 minutes) |
 | `TIME_WINDOW_AFTER_BOOKING` | `600` | Time in seconds after a booking ends that the door can still be opened (600 = 10 minutes) |
 
@@ -248,6 +253,7 @@ The following environment variables can be configured in a `.env` file for docke
    # Copy and configure environment variables
    cp .env.example .env
    # Edit .env with your actual values
+   # Generate JWT_SECRET with: openssl rand -base64 48
    
    # Start services (Docker images are going to be pulled from GHCR)
    docker-compose up
@@ -261,7 +267,7 @@ The following environment variables can be configured in a `.env` file for docke
    # Run with environment variables
    docker run -p 8080:8080 \
      -e DATABASE_URL="mysql://user:password@host:3306/mrbs_db" \
-     -e JWT_SECRET="your-secret-key" \
+     -e JWT_SECRET="$(openssl rand -base64 48)" \
      -e CCU_JACK_URL="https://your-ccu-jack-host:2121" \
      the-doors-backend
    ```
@@ -360,7 +366,11 @@ src/
 ## Security Features
 
 - Passwords are hashed using bcrypt
+- JWT secrets must be configured explicitly and weak public placeholders are rejected at startup
 - JWT tokens expire after 24 hours
 - SQL injection prevention through parameterized queries
+- Entry APIs only expose data for the authenticated user
+- Door operations enforce booking ownership and the configured booking time window
+- CCU-JACK TLS certificate verification is enabled by default
 - Input validation and sanitization
 - Secure error handling (no sensitive data in error messages)
