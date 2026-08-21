@@ -106,6 +106,7 @@ export default {
   align-items: center;
   min-height: 80vh;
   padding: 2rem;
+  width: 100%;
 }
 
 .login-container {
@@ -228,13 +229,35 @@ export default {
   text-decoration: underline;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
+  .login {
+    align-items: flex-start;
+    min-height: calc(100dvh - 5rem);
+    padding: 1.5rem 0.75rem max(7rem, env(safe-area-inset-bottom));
+  }
+
   .login-container {
-    padding: 1.5rem;
+    max-width: none;
+    width: 100%;
+    padding: 1.35rem;
+    border-radius: 0.75rem;
+  }
+
+  .login-header {
+    margin-bottom: 1.5rem;
   }
   
   .login-header h2 {
     font-size: 1.5rem;
+  }
+
+  .login-form {
+    gap: 1.2rem;
+  }
+
+  .form-group input,
+  .login-btn {
+    min-height: 3rem;
   }
 }
 </style>

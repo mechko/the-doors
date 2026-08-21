@@ -58,10 +58,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background: linear-gradient(135deg, #e08916 0%, #ef8f10 100%);
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 #app {
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
 }
@@ -131,5 +133,29 @@ body {
   justify-content: center;
   align-items: center;
   padding: 2rem;
+}
+
+@media (max-width: 600px) {
+  .navbar {
+    padding: 0.75rem 0;
+  }
+
+  .nav-container {
+    padding: 0 1.25rem;
+  }
+
+  .nav-title {
+    font-size: 1.35rem;
+  }
+
+  .nav-link,
+  .logout-btn {
+    padding: 0.45rem 0.85rem;
+  }
+
+  .main-content {
+    align-items: stretch;
+    padding: 0;
+  }
 }
 </style>

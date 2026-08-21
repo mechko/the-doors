@@ -518,7 +518,7 @@ export default {
 
 .door-btn.close-btn:hover:not(:disabled) {
   background: rgba(255, 165, 0, 0.2);
-  border-color: #ff5500(255, 165, 0, 0.5);
+  border-color: rgba(255, 165, 0, 0.5);
 }
 
 .door-btn:hover:not(:disabled) {
@@ -532,12 +532,50 @@ export default {
 }
 
 @media (max-width: 768px) {
+  .dashboard {
+    width: 100%;
+    max-width: none;
+    padding: 1rem 0.75rem max(7rem, env(safe-area-inset-bottom));
+  }
+
+  .dashboard-container {
+    gap: 1rem;
+  }
+
+  .welcome-section {
+    margin-bottom: 0.5rem;
+    text-align: left;
+  }
+
   .dashboard-grid {
     grid-template-columns: 1fr;
+    gap: 1rem;
   }
   
   .welcome-section h1 {
-    font-size: 2rem;
+    font-size: 1.75rem;
+  }
+
+  .welcome-section p {
+    font-size: 1rem;
+  }
+
+  .dashboard-card {
+    width: 100%;
+    border-radius: 0.75rem;
+  }
+
+  .card-header,
+  .card-content {
+    padding: 1rem;
+  }
+
+  .entries-section {
+    margin-top: 0;
+  }
+
+  .entry-item {
+    padding: 1rem;
   }
   
   .info-item {
@@ -561,9 +599,11 @@ export default {
     gap: 0.5rem;
   }
   
+  .action-btn,
   .door-btn {
     width: 100%;
     justify-content: center;
+    min-height: 3rem;
   }
 }
 </style>
