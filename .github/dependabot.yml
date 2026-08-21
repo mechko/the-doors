@@ -14,5 +14,13 @@ updates:
     schedule:
       interval: "weekly"
     ignore:
+      - dependency-name: "@babel/core"
+        versions: [">=8"]
+      - dependency-name: "@babel/eslint-parser"
+        versions: [">=8"]
       - dependency-name: "eslint"
         versions: [">=9"]
+      - dependency-name: "eslint-plugin-vue"
+        versions: [">=10"]
+      - dependency-name: "vue-router"
+        versions: [">=5"]
