@@ -1,0 +1,27 @@
+Cargo.toml
+  s_c7661b417906cb::t_529c82987f18ab 12,16
+frontend/package.json
+  s_c7661b417906cb::t_d6e3a61ae6a025 22
+.github/dependabot.yml
+  s_c7661b417906cb::t_529c82987f18ab 17-20,23-26
+Cargo.lock
+  s_c7661b417906cb::t_003b53dbea48a7 11,32-33,233-282,345-350,359,361,363,365,370-375,405,407,512,514,516,529-534,674,676,718-748,797,919-920,922,926-938,1127,1129,1384,1549,1551,1553,1563-1564,1566,1574-1609,1686,1737,1908-1913,1979,2037-2051,2228,2237,2281,2506,2740,2817-2818,2861-2862,2990,3184,3315-3320
+frontend/package-lock.json
+  s_c7661b417906cb::t_6d1fda97a0905d 22,2549-2551,2555
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "35eebfc7b2a664c581d0e5354d6171853f3fc748",
+  "prompts": {},
+  "sessions": {
+    "s_c7661b417906cb": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a024ad-aed1-7323-9418-392658f8db81",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Mirko Swillus <mechko@mk0.eu>"
+    }
+  }
+}
