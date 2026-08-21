@@ -261,6 +261,20 @@ The following environment variables can be configured in a `.env` file for docke
 
    For public HTTPS with Let's Encrypt, set `DOMAIN` to the public hostname and expose `HTTP_PORT=80` and `HTTPS_PORT=443`. The compose file persists Caddy's `/data` and `/config` directories in named Docker volumes so ACME accounts and certificates survive container recreates.
 
+   To test local source changes on your Mac without waiting for GitHub Actions or making the Raspi build images, enable the local build override only in your Mac `.env`:
+
+   ```bash
+   COMPOSE_FILE=docker-compose.yml:docker-compose.local-build.yml
+   ```
+
+   Then run:
+
+   ```bash
+   docker-compose up --build
+   ```
+
+   Leave `COMPOSE_FILE` unset on the Raspi so it keeps pulling the GHCR images. Remove or comment out `COMPOSE_FILE` locally to return to the GHCR images.
+
 2. **Or build and run manually**:
    ```bash
    # Build the Docker image

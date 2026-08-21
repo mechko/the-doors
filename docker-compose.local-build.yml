@@ -1,0 +1,8 @@
+services:
+  the-doors-frontend:
+    build: ./frontend
+    image: the-doors-frontend:local
+
+  the-doors-backend:
+    build: .
+    image: the-doors-backend:local
