@@ -235,7 +235,7 @@ The following environment variables can be configured in a `.env` file for docke
 |----------|---------|-------------|
 | `HTTP_PORT` | `3000` | HTTP port for the frontend |
 | `HTTPS_PORT` | `3443` | HTTPS port for the frontend |
-| `DOMAIN` | `localhost` | Domain name for the frontend |
+| `DOMAIN` | `localhost` | Domain name for the frontend. Set this to the public hostname when using Let's Encrypt. |
 | `DATABASE_URL` | `mysql://mrbs_user:mrbs_password@mysql:3306/mrbs` | MySQL connection string for the backend |
 | `JWT_SECRET` | Required | Random secret for JWT token generation. Must be at least 32 characters and must not use a public placeholder. |
 | `SERVER_HOST` | `0.0.0.0` | Host address the backend server binds to (not so relevant, because Docker)|
@@ -258,6 +258,8 @@ The following environment variables can be configured in a `.env` file for docke
    # Start services (Docker images are going to be pulled from GHCR)
    docker-compose up
    ```
+
+   For public HTTPS with Let's Encrypt, set `DOMAIN` to the public hostname and expose `HTTP_PORT=80` and `HTTPS_PORT=443`. The compose file persists Caddy's `/data` and `/config` directories in named Docker volumes so ACME accounts and certificates survive container recreates.
 
 2. **Or build and run manually**:
    ```bash
