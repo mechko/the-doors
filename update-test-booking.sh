@@ -42,7 +42,7 @@ SET @test_room_id := (
   SELECT id
   FROM mrbs_room
   WHERE disabled = 0
-  ORDER BY (sort_key <> '') DESC, id ASC
+  ORDER BY (LOCATE('-', sort_key) > 0) DESC, id ASC
   LIMIT 1
 );
 
@@ -121,7 +121,10 @@ SELECT
   e.end_time,
   e.room_id,
   r.room_name,
-  r.sort_key AS lock_id
+  CASE
+    WHEN LOCATE('-', r.sort_key) > 0 THEN SUBSTRING_INDEX(r.sort_key, '-', -1)
+    ELSE ''
+  END AS lock_id
 FROM mrbs_users u
 JOIN mrbs_entry e ON e.create_by = u.name
 JOIN mrbs_room r ON r.id = e.room_id

@@ -44,11 +44,31 @@ impl UserAndRoomRepository {
         let time_window_before = read_i64_env("TIME_WINDOW_BEFORE_BOOKING")?;
         let time_window_after = read_i64_env("TIME_WINDOW_AFTER_BOOKING")?;
 
-        let entries = sqlx::query_as!(
-            Entry,
-            r#"SELECT e.id as id, e.start_time as start_time, e.end_time as end_time, e.room_id as room_id, e.name as name, e.create_by as create_by, r.room_name as "room_name!", r.sort_key as "lock_id!" FROM mrbs_entry e LEFT JOIN mrbs_room r ON e.room_id=r.id WHERE e.create_by = ? AND (? > e.start_time - ? AND ? < e.end_time + ?)"#,
-            username, now, time_window_before, now, time_window_after
+        let entries = sqlx::query_as::<_, Entry>(
+            r#"
+            SELECT
+                e.id,
+                e.start_time,
+                e.end_time,
+                e.room_id,
+                r.room_name,
+                e.name,
+                e.create_by,
+                CASE
+                    WHEN LOCATE('-', r.sort_key) > 0 THEN SUBSTRING_INDEX(r.sort_key, '-', -1)
+                    ELSE ''
+                END AS lock_id
+            FROM mrbs_entry e
+            LEFT JOIN mrbs_room r ON e.room_id = r.id
+            WHERE e.create_by = ?
+                AND (? > e.start_time - ? AND ? < e.end_time + ?)
+            "#,
         )
+        .bind(username)
+        .bind(now)
+        .bind(time_window_before)
+        .bind(now)
+        .bind(time_window_after)
         .fetch_all(&self.pool)
         .await?;
 
@@ -56,11 +76,26 @@ impl UserAndRoomRepository {
     }
 
     pub async fn find_entry_by_id(&self, entry_id: i32) -> Result<Option<Entry>> {
-        let entry = sqlx::query_as!(
-            Entry,
-            r#"SELECT e.id as id, e.start_time as start_time, e.end_time as end_time, e.room_id as room_id, e.name as name, e.create_by as create_by, r.room_name as "room_name!", r.sort_key as "lock_id!" FROM mrbs_entry e LEFT JOIN mrbs_room r ON e.room_id=r.id WHERE e.id = ?"#,
-            entry_id
+        let entry = sqlx::query_as::<_, Entry>(
+            r#"
+            SELECT
+                e.id,
+                e.start_time,
+                e.end_time,
+                e.room_id,
+                r.room_name,
+                e.name,
+                e.create_by,
+                CASE
+                    WHEN LOCATE('-', r.sort_key) > 0 THEN SUBSTRING_INDEX(r.sort_key, '-', -1)
+                    ELSE ''
+                END AS lock_id
+            FROM mrbs_entry e
+            LEFT JOIN mrbs_room r ON e.room_id = r.id
+            WHERE e.id = ?
+            "#,
         )
+        .bind(entry_id)
         .fetch_optional(&self.pool)
         .await?;
 

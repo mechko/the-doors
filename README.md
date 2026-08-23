@@ -46,7 +46,7 @@ graph TD
 
 I decided to use the MRBS Database as the integration layer with MRBS. The alternative would have been to customize the MRBS PHP application (prototype successful), but this will make updates of MRBS more difficult.
 
-We're using the table mrbs_room to store the ID of the Homematic lock for the room in the column "sort_key" (which is a string type). This can be easily edited by admins of MRBS in the web frontend. A minor drawback is that this of course changes the sort order of the rooms in the user interface. In future versions, this could be circumvented by introducing a convention to prefix the ID with the actual sort key (and then parsing the ID later from that entry).
+We're using the table mrbs_room to store the ID of the Homematic lock for the room in the column "sort_key" (which is a string type). To preserve the normal MRBS room ordering, store the value as `<SORT-KEY>-<LOCK-ID>`, for example `001-002A20C9AEDCC9`. The backend uses the part after the last `-` as the Homematic lock ID. Rooms without this separator are treated as rooms without a configured lock.
 
 ### Component Description
 

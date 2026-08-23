@@ -255,7 +255,7 @@ CREATE TABLE `mrbs_room` (
 
 LOCK TABLES `mrbs_room` WRITE;
 /*!40000 ALTER TABLE `mrbs_room` DISABLE KEYS */;
-INSERT INTO `mrbs_room` VALUES (1,0,1,'Room One','002A20C9AEDCC9','',0,'','[]',NULL),(2,0,1,'Room Two','Room Two','',0,'',NULL,NULL),(3,0,1,'Room Three','Room Three','Foo',23,'',NULL,NULL);
+INSERT INTO `mrbs_room` VALUES (1,0,1,'Room One','001-002A20C9AEDCC9','',0,'','[]',NULL),(2,0,1,'Room Two','002','',0,'',NULL,NULL),(3,0,1,'Room Three','003','Foo',23,'',NULL,NULL);
 /*!40000 ALTER TABLE `mrbs_room` ENABLE KEYS */;
 UNLOCK TABLES;
 
