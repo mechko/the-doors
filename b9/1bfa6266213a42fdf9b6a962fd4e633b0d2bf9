@@ -1,0 +1,25 @@
+update-test-booking.sh
+  s_c7661b417906cb::t_4f421fe3636c08 45,124-127
+README.md
+  s_c7661b417906cb::t_4f421fe3636c08 49
+src/repository.rs
+  s_c7661b417906cb::t_9925129702dfc4 47-65,67-71,79-96,98
+tmp/init.sql
+  s_c7661b417906cb::t_4f421fe3636c08 258
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "b91bfa6266213a42fdf9b6a962fd4e633b0d2bf9",
+  "prompts": {},
+  "sessions": {
+    "s_c7661b417906cb": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a024ad-aed1-7323-9418-392658f8db81",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Mirko Swillus <mechko@mk0.eu>"
+    }
+  }
+}
